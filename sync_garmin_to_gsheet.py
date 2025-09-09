@@ -8,7 +8,6 @@ import json
 # --- CONFIGURAÇÕES E CREDENCIAIS (VERSÃO SEGURA PARA AUTOMAÇÃO) ---
 
 # O script vai buscar as credenciais diretamente dos "Secrets" do GitHub Actions.
-# Se esses Secrets não existirem, os valores serão vazios.
 GARMIN_EMAIL = os.environ.get("GARMIN_EMAIL")
 GARMIN_PASSWORD = os.environ.get("GARMIN_PASSWORD")
 GCP_CREDENTIALS_JSON = os.environ.get("GCP_CREDENTIALS")
@@ -57,15 +56,17 @@ def coletar_e_salvar_dados_garmin():
         client.login()
         print("Conexão com o Garmin bem-sucedida!")
 
-        # ... (O resto do código de coleta de dados permanece exatamente o mesmo)
+        # Busca as estatísticas gerais do dia
         stats = client.get_stats(data_str)
         passos = stats.get('totalSteps', 0)
         calorias = stats.get('totalKilocalories', 0)
         
+        # Busca dados de sono e converte para horas
         sono_data = client.get_sleep_data(data_str)
         segundos_sono = sono_data.get('totalSleepSeconds', 0)
         horas_sono = round(segundos_sono / 3600, 2) if segundos_sono else 0
         
+        # Busca Body Battery (VERSÃO CORRIGIDA E MAIS ROBUSTA)
         bb_data = client.get_body_battery(data_str)
         body_battery_max = 0
         if bb_data:
@@ -73,6 +74,7 @@ def coletar_e_salvar_dados_garmin():
             if niveis_validos:
                 body_battery_max = max(niveis_validos)
 
+        # Busca Frequência Cardíaca em Repouso
         hr_data = client.get_heart_rates(data_str)
         fc_repouso = hr_data.get('restingHeartRate', 0)
 
@@ -85,3 +87,17 @@ def coletar_e_salvar_dados_garmin():
             return
             
         spreadsheet = gc.open(NOME_DA_PLANILHA)
+        worksheet = spreadsheet.worksheet(NOME_DA_ABA)
+        print("Conexão com o Google Sheets bem-sucedida!")
+
+        nova_linha = [data_str, passos, calorias, horas_sono, body_battery_max, fc_repouso]
+        worksheet.append_row(nova_linha)
+        
+        print(f"\nSUCESSO! Nova linha de dados adicionada à planilha '{NOME_DA_PLANILHA}'.")
+
+    except Exception as e:
+        print(f"\nERRO: Ocorreu um problema durante o processo: {e}")
+
+# --- EXECUÇÃO DO SCRIPT ---
+if __name__ == "__main__":
+    coletar_e_salvar_dados_garmin()
