@@ -1,4 +1,4 @@
-# 📊 Healthy Analytics: Dashboard de Saúde e Produtividade
+# 📊 Healthy Analytics: Dashboard de Saúde
 
 Este repositório contém o código para um dashboard pessoal e inteligente, projetado para unificar e analisar dados de saúde do Garmin Connect com outras fontes de dados, como Notion e Google Sheets. O projeto inclui um pipeline de dados automatizado e utiliza a API do Google Gemini para gerar insights.
 
@@ -13,7 +13,11 @@ O objetivo deste projeto é criar uma visão 360º de métricas pessoais, combin
 
 *A arquitetura foi projetada para ser robusta, escalável e de baixo custo (totalmente gratuita).*
 
-![Diagrama da Arquitetura](URL_DA_IMAGEM_DA_ARQUITETURA_AQUI)  ## 🛠️ Tecnologias Utilizadas
+![Diagrama da Arquitetura](URL_DA_IMAGEM_DA_ARQUITETURA_AQUI)  
+
+
+
+🛠️ Tecnologias Utilizadas
 
 * **Linguagem:** Python
 * **Coleta de Dados:**
